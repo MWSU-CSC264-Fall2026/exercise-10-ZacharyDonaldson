@@ -20,26 +20,23 @@ done:   .asciiz "Even Sum Exercise Complete!\n"
 .globl main
 main:
 
-    # TODO: Call sum_even for array1.
-    # Put the address of array1 in a0.
-    # Put the length of array1 in a1.
-    # Store the returned value in result1.
+    # Call sum_even for array1
+    la a0, array1
+    lw a1, len1
+    jal ra, sum_even
+    sw a0, result1
 
+    # Call sum_even for array2
+    la a0, array2
+    lw a1, len2
+    jal ra, sum_even
+    sw a0, result2
 
-
-    # TODO: Call sum_even for array2.
-    # Put the address of array2 in a0.
-    # Put the length of array2 in a1.
-    # Store the returned value in result2.
-
-
-
-    # TODO: Call sum_even for array3.
-    # Put the address of array3 in a0.
-    # Put the length of array3 in a1.
-    # Store the returned value in result3.
-
-
+    # Call sum_even for array3
+    la a0, array3
+    lw a1, len3
+    jal ra, sum_even
+    sw a0, result3
 
     # Print completion message
     la a1, done
@@ -51,7 +48,7 @@ main:
     ecall
 
 
-# TODO: Implement sum_even.
+# Implement sum_even.
 #
 # Arguments:
 #   a0 = address of array
@@ -67,3 +64,23 @@ main:
 #   - You may use t registers freely.
 #   - If you use s registers, save and restore them.
 sum_even:
+
+    li t0, 0              # t0 = sum
+
+loop:
+    beqz a1, done_sum     # if length == 0, finish
+
+    lw t1, 0(a0)          # load current array element
+    andi t2, t1, 1        # check if value is odd
+    bnez t2, skip_add     # if odd, don't add it
+
+    add t0, t0, t1        # add even value to sum
+
+skip_add:
+    addi a0, a0, 4        # move to next array element
+    addi a1, a1, -1       # decrease remaining length
+    j loop
+
+done_sum:
+    mv a0, t0             # return sum in a0
+    ret
